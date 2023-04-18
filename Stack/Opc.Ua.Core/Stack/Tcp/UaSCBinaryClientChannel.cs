@@ -1162,9 +1162,9 @@ namespace Opc.Ua.Bindings
             }
 
             // calculate renewal timing based on token lifetime.
-            DateTime expiryTime = token.CreatedAt.AddMilliseconds(token.Lifetime);
+            int expiryTime = token.CreatedAtTick + token.Lifetime;
 
-            double timeToRenewal = ((expiryTime.Ticks - DateTime.UtcNow.Ticks) / TimeSpan.TicksPerMillisecond) * TcpMessageLimits.TokenRenewalPeriod;
+            double timeToRenewal = (expiryTime - Environment.TickCount) * TcpMessageLimits.TokenRenewalPeriod;
 
             if (timeToRenewal < 0)
             {
