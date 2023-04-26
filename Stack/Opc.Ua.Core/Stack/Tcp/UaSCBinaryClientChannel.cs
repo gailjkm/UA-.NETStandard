@@ -1163,6 +1163,7 @@ namespace Opc.Ua.Bindings
 
             // calculate renewal timing based on token lifetime.
             int expiryTime = token.CreatedAtTick + token.Lifetime;
+            int remainingTime = (expiryTime - Environment.TickCount);
 
             double timeToRenewal = (expiryTime - Environment.TickCount) * TcpMessageLimits.TokenRenewalPeriod;
 
@@ -1171,7 +1172,7 @@ namespace Opc.Ua.Bindings
                 timeToRenewal = 0;
             }
 
-            Utils.LogInfo("ChannelId {0}: Token Expiry {1}, renewal scheduled in {2} ms.", ChannelId, expiryTime, (int)timeToRenewal);
+            Utils.LogInfo("ChannelId {0}: Token Expiry in {1} ms, renewal scheduled in {2} ms.", ChannelId, remainingTime, (int)timeToRenewal);
 
             m_handshakeTimer = new Timer(m_startHandshake, token, (int)timeToRenewal, Timeout.Infinite);
         }
