@@ -1165,7 +1165,10 @@ namespace Opc.Ua.Bindings
             int expiryTime = token.CreatedAtTick + token.Lifetime;
             int remainingTime = (expiryTime - Environment.TickCount);
 
-            double timeToRenewal = (expiryTime - Environment.TickCount) * TcpMessageLimits.TokenRenewalPeriod;
+            // (re-)calculate the remaining time as fraction of the expected lifetime, 
+			// not as fraction of the age of the token
+            //double timeToRenewal = (expiryTime - Environment.TickCount) * TcpMessageLimits.TokenRenewalPeriod;
+            double timeToRenewal = token.Lifetime * TcpMessageLimits.TokenRenewalPeriod -   (Environment.TickCount - token.CreatedAtTick);
 
             if (timeToRenewal < 0)
             {
