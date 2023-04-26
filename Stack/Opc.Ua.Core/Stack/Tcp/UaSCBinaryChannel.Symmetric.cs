@@ -535,8 +535,8 @@ namespace Opc.Ua.Bindings
             if (token.Expired)
             {
                 throw ServiceResultException.Create(StatusCodes.BadTcpSecureChannelUnknown,
-                    "Channel{0}: Token #{1} has expired. Lifetime={2:HH:mm:ss.fff}",
-                    Id, token.TokenId, token.CreatedAt);
+                    "Channel{0}: Token #{1} has expired. CreatedAt={2:HH:mm:ss.fff}. Lifetime={3}.",
+                    Id, token.TokenId, token.CreatedAt, token.Lifetime);
             }
 
             int headerSize = decoder.Position;
