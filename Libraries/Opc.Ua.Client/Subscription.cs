@@ -758,7 +758,9 @@ namespace Opc.Ua.Client
                 {
                     int keepAliveInterval = (int)(Math.Min(m_currentPublishingInterval * m_currentKeepAliveCount, Int32.MaxValue - 500));
 
-                    if (m_lastNotificationTime.AddMilliseconds(keepAliveInterval + 500) < DateTime.UtcNow)
+                    // Do not use the utc clock, but the clock independent ticks instead.
+                    //if (m_lastNotificationTime.AddMilliseconds(keepAliveInterval + 500) < DateTime.UtcNow)
+                    if (Environment.TickCount - m_lastNotificationTimeTicks > (keepAliveInterval + 500) ) 
                     {
                         return true;
                     }
@@ -1316,6 +1318,7 @@ namespace Opc.Ua.Client
                 }
 
                 DateTime now = m_lastNotificationTime = DateTime.UtcNow;
+                m_lastNotificationTimeTicks = Environment.TickCount;
 
                 // save the string table that came with notification.
                 message.StringTable = new List<string>(stringTable);
@@ -1632,6 +1635,7 @@ namespace Opc.Ua.Client
             lock (m_cache)
             {
                 m_lastNotificationTime = DateTime.UtcNow;
+                m_lastNotificationTimeTicks = Environment.TickCount;
             }
 
             int keepAliveInterval = (int)(Math.Min(m_currentPublishingInterval * m_currentKeepAliveCount, Int32.MaxValue));
@@ -2460,6 +2464,7 @@ namespace Opc.Ua.Client
         private byte m_currentPriority;
         private Timer m_publishTimer;
         private DateTime m_lastNotificationTime;
+        private int m_lastNotificationTimeTicks;
         private int m_publishLateCount;
         private event EventHandler m_publishStatusChanged;
 
